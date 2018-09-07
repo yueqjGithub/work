@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Title</title>
+  <link rel="stylesheet" href=".././css/reset.css">
+  <link rel="stylesheet" href="../css/flybird.css">
+</head>
+<body>
+<div>
+  <canvas id="canvas">
+
+  </canvas>
+  <button onclick="test()">请你按死我</button>
+</div>
+
+<script src=".././js/jquery.js"></script>
+<script>
+  let start = false
+  let drawHeight = document.documentElement.clientHeight //获取可视区域高度
+  let drawWidth = document.documentElement.clientWidth //获取可视区域宽度
+  let cvs = document.getElementById("canvas");
+  let ctx = cvs.getContext("2d");
+let pro = new Promise(function(resolve,reject){
+  drawWidth = drawWidth > 500 ? 500:drawWidth
+  drawHeight = drawHeight > 700 ? 700:drawHeight
+  cvs.setAttribute('width',drawWidth)
+  cvs.setAttribute('height',drawHeight)
+  let img = new Image();
+  img.src= '../img/sky.png'
+  img.onload=function () {
+    let resList = {'img':img,'width':drawWidth,'height':drawHeight} // 将img和宽高通过resolve传递给then()
+    resolve(resList)
+  }
+}).then(function (res) { //绘制背景天空
+//  console.log(res)
+  let width =res.width
+  let height = res.height
+  ctx.drawImage(res.img,0,0,width,height)
+  let landBg = new Image();
+  landBg.src = '../img/land.png'
+  let resList = {'img':landBg,'width':width,'height':height}
+  return resList
+}).then(function (res) { //绘制背景地面
+  console.log(res)
+//  console.log(res)
+  ctx.drawImage(res.img, 0, res.height - 112, res.width,112)
+  return start = true //将准备工作状态start变更为true，至此背景绘制完毕
+})
+  let cvx2 = document.createElement('canvas') //创建新的画布作为游戏实际场景
+  let ctx2 = cvx2.getContext('2d')
+  cvx2.setAttribute('width',drawWidth)
+  cvx2.setAttribute('height',drawHeight)
+  let startHeight = (drawHeight-112)/2 //给定bird初始垂直方向位置
+  let birdType = 0 //鸟儿翅膀有三种样式，用1 2 3切换
+
+function birdDown(){
+  let downSpeed = 5
+  let birdImg = new Image()
+  birdImg.src = '../img/birds.png'
+  startHeight += downSpeed
+  birdImg.onload=function () {
+//    ctx2.fillStyle = 'rgba(0,0,0,0.1)'
+    ctx2.clearRect(50,startHeight-downSpeed,50,45)
+    ctx2.drawImage(birdImg,50*birdType,0,50,45,50,startHeight,50,45)
+    document.body.appendChild(cvx2)
+    if(birdType < 2){
+      birdType++
+    }else if (birdType == 2){
+      birdType =0
+    }
+  }
+  console.log(startHeight)
+}
+//  if(start = true){
+//
+//    let bd = setInterval('birdDown()',100)
+//  }
+
+  function test () {
+    birdDown()
+  }
+
+
+
+</script>
+</body>
+</html>
