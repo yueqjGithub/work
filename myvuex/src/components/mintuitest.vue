@@ -4,7 +4,7 @@
     <p>
       <button>cloase</button>
     </p>
-    <mt-loadmore :top-method='topLoad' :bottom-method="bottomLoad" ref="loadmore" :bottom-all-loaded="isLoaded" :autoFill="autofill">
+    <mt-loadmore :top-method='topLoad' :bottom-method="bottomLoad" ref="loadmore" :bottom-all-loaded="isLoaded" :autoFill="autofill" :distanceIndex=1>
       <ul>
         <li v-for="(item,index) in list" :key="index">
           <div v-if="!item.vediosrc" class="normalMsg">
@@ -57,14 +57,15 @@ export default {
       if (!vm.isLoaded) {
         vm.IndChange('加载中')
         getUrl.getMsg(vm.page, vm.limit).then(function (res) {
+          console.log(res)
           for (let k of res.data.data) {
             vm.list.push(k)
           }
           vm.isLoadSuc = true
           vm.IndChange('加载中')
-          if (res.data.length === vm.limit) {
+          if (vm.list.length < res.data.len) {
             vm.page++
-          } else if (res.data.length < vm.limit) {
+          } else if (vm.list.length === res.data.len) {
             vm.isLoaded = true
           }
           vm.$refs.loadmore.onBottomLoaded()
@@ -79,7 +80,9 @@ export default {
       let vm = this
       getUrl.getMsg(1, 10).then(function (res) {
         vm.list = res.data.data
+        vm.page = 2
         vm.IndChange('加载中')
+        vm.isLoaded = false
         vm.$refs.loadmore.onTopLoaded()
         vm.IndChange('加载完成')
       })
@@ -121,5 +124,9 @@ li {
     flex: 2;
     text-align: right;
     padding-right: .05rem;
+  }
+  .player{
+    width:90%;
+    margin:0 auto;
   }
 </style>

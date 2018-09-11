@@ -54,6 +54,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       app.post('/api/seller', (req, res) => {
         let obj
         let resData = []
+        let length = 0
         req.on('data',function(data){
           obj=JSON.parse(data);
           console.log(obj);
@@ -67,7 +68,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           res.json({
             errno: 0,
             data: resData,
-            length: resData.length
+            len: appData.length
           })
         })
         //接口返回json数据，上面配置的数据seller就赋值给data请求后调用

@@ -44,7 +44,8 @@ export default {
           src: this.$props.src // 你的m3u8地址（必填）
         }],
         poster: 'poster.jpg', // 你的封面地址
-        width: document.documentElement.clientWidth,
+        // eslint-disable-next-line
+//        width: document.documentElement.clientWidth, 设置无效，可设置外层DIV控制
         notSupportedMessage: '', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
         controlBar: {
           timeDivider: true,
