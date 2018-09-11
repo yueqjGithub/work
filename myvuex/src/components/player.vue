@@ -95,4 +95,5 @@ export default {
   .vjs-custom-skin > .video-js .vjs-big-play-button{
     font-size: .25rem;
   }
+  /*-该样式未生效，可在main.js中引入自己的样式文件，放在vedio.js引入语句后-*/
 </style>
