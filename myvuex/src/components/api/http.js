@@ -1,4 +1,4 @@
-const host = 'http://localhost:8081'
+const host = 'http://192.168.0.36:8081'
 const url = host + '/api/seller'
 // eslint-disable-next-line
 const getOthers = host + '/api/others'

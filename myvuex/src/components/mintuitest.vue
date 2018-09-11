@@ -1,18 +1,24 @@
 <template>
   <div>
-    <button @click = 'toast'>Toast</button>
+    <!--<button @click = 'toast'>Toast</button>-->
     <p>
       <button>cloase</button>
     </p>
-    <mt-loadmore>
+    <mt-loadmore :top-method='topLoad' :bottom-method="bottomLoad" ref="loadmore" :bottom-all-loaded="isLoaded" :autoFill="autofill">
       <ul>
         <li v-for="(item,index) in list" :key="index">
-          <p class="names">
-            {{item.name}}
-          </p>
-          <p class="orders">
-            {{item.id}}
-          </p>
+          <div v-if="!item.vediosrc" class="normalMsg">
+            <p class="names">
+              {{item.name}}
+            </p>
+            <p class="orders">
+              {{item.id}}
+            </p>
+          </div>
+          <div v-if="item.vediosrc" class="player">
+            <p>{{item.vediosrc}}</p>
+            <videoPlayer :src="item.vediosrc"></videoPlayer>
+          </div>
         </li>
       </ul>
     </mt-loadmore>
@@ -24,19 +30,29 @@
 import {Toast, Indicator, Loadmore} from 'mint-ui'
 // eslint-disable-next-line
 import getUrl from './api/http'
+import videoPlayer from './player.vue'
 export default {
   name: '',
+  components: {
+    videoPlayer: videoPlayer
+  },
   data () {
     return {
       list: [],
       isLoadSuc: false,
       page: 1,
       limit: 10,
-      isLoaded: false
+      isLoaded: false,
+      autofill: true
+    }
+  },
+  computed: {
+    player () {
+      return this.$refs.videoPlayer.player
     }
   },
   methods: {
-    toast: function () {
+    bottomLoad: function () {
       let vm = this
       if (!vm.isLoaded) {
         vm.IndChange('加载中')
@@ -45,12 +61,13 @@ export default {
             vm.list.push(k)
           }
           vm.isLoadSuc = true
-          vm.IndChange()
+          vm.IndChange('加载中')
           if (res.data.length === vm.limit) {
             vm.page++
           } else if (res.data.length < vm.limit) {
             vm.isLoaded = true
           }
+          vm.$refs.loadmore.onBottomLoaded()
         }).catch(e => {
           console.log(e)
         })
@@ -58,10 +75,20 @@ export default {
         Toast('没有更多了')
       }
     },
+    topLoad: function () {
+      let vm = this
+      getUrl.getMsg(1, 10).then(function (res) {
+        vm.list = res.data.data
+        vm.IndChange('加载中')
+        vm.$refs.loadmore.onTopLoaded()
+        vm.IndChange('加载完成')
+      })
+    },
     IndChange: function (tit) {
       let vm = this
       if (!vm.isLoadSuc) {
         Indicator.open(tit)
+        vm.isLoadSuc = true
       } else {
         setTimeout(() => {
           Indicator.close()
@@ -69,21 +96,30 @@ export default {
         vm.isLoadSuc = false
       }
     }
+  },
+  created: function () {
+    this.bottomLoad()
   }
 }
 </script>
 
 <style scoped>
 li {
-  display: flex;
-  height: .5rem;
+  min-height: .5rem;
+  width:100%;
   line-height: .5rem;
+}
+.normalMsg{
+  display: flex;
+  width:100%;
 }
   .names {
     flex:1;
+    padding-left: .05rem;
   }
   .orders{
     flex: 2;
     text-align: right;
+    padding-right: .05rem;
   }
 </style>

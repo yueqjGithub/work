@@ -8,6 +8,13 @@ import axios from 'axios'
 import 'mint-ui/lib/style.css'
 import Vuex from 'vuex'
 import store from './store'
+import VideoPlayer from 'vue-video-player'
+// 加载video player
+require('video.js/dist/video-js.css')
+require('vue-video-player/src/custom-theme.css')
+require('@/../static/css/playerCss.css')
+
+Vue.use(VideoPlayer)
 
 Vue.use(Vuex)
 Vue.use(MintUI)
